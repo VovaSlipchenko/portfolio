@@ -1,0 +1,56 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial;
+    background-image: url(./images/bg.jpg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.card_size{
+    width:150px;
+    height:200px;
+}
+
+.card{
+    
+    border-radius: 10px;
+    box-shadow: 2px 1px 10px -1px rgba(0,0,0,0.75);
+    position: absolute;
+    background:#ffffff;
+    user-select: none;
+    padding:5px;
+    font-weight: bold;
+
+}
+
+.card_hidden{
+    background:#DDD;
+}
+
+.card_hidden div{
+    display:none;
+}
+
+.card_red{
+    color:#F00;
+}
+
+.card_stack{
+    
+    border-radius: 10px;
+    position: absolute;
+    border:1px solid #EEE;
+    background:rgba(255,255,255,0.5);
+
+}
+
+.card_roller{
+    cursor: pointer;
+}
+
+.card_inner_nominal{
+    float:left;
+}

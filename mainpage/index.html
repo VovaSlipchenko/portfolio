@@ -1,0 +1,183 @@
+<html>
+
+    <head>
+
+    </head>
+
+    <body>
+
+        <style>
+            body{
+                margin:0px;
+                padding:0px;
+            }
+        </style>
+
+        <script src="three.js"></script>
+        <script src="orbit_control.js"></script>
+        <script src="threejs_factory.js"></script>
+		<script>
+            
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 100 );
+
+            const LAYER_SCENE_MAIN = 1;
+            const LAYER_SCENE_PORTAL = 2;
+
+            camera.position.x = 3.5;
+            camera.position.z = 3.5;
+            camera.position.y = 3.5;
+
+            camera.lookAt(0,0.5,0);
+
+            camera.layers.enableAll();
+
+            
+
+            const light = new THREE.PointLight( 0xFFFFFF, 1, 100 );
+            light.position.set( 5, 5, 2);
+            light.layers.enableAll();
+            scene.add(light);
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias:true });
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+            
+
+            const ObjFactory = new ThreeObjectFactory(scene);
+
+            let room_size = 2.5;
+            let wall_with = 0.1;
+            let wall_height = 2;
+
+            let wall_material_width = 0.02;
+
+            let concrete_color = 0xEEEEEE;
+            let floor_color = 0xFF0000;
+            let wall_color = 0xFF0000;
+
+            //CONCRETE
+
+            ObjFactory.createBox({
+                height:wall_with,
+                width:room_size,
+                depth:room_size,
+                color:concrete_color, 
+                layer: LAYER_SCENE_MAIN
+            });
+
+            
+            ObjFactory.createBox({
+                height:wall_height,
+                width:room_size,
+                depth:wall_with,
+                z: room_size/2 * -1 - wall_with / 2,
+                y: wall_height/2 - wall_with / 2,
+                color:concrete_color, 
+                layer: LAYER_SCENE_MAIN
+            });
+
+            ObjFactory.createBox({
+                height:wall_height,
+                width:wall_with,
+                depth: (room_size + wall_with),
+                x: room_size/2 * -1,
+                y: wall_height/2 - wall_with / 2,
+                z: wall_with / 2 *-1,
+                color:concrete_color, 
+                layer: LAYER_SCENE_MAIN
+            });
+
+            
+            //FLOOR
+
+            ObjFactory.createBox({
+                height: wall_material_width,
+                width: room_size,
+                depth: room_size,
+                color: floor_color, 
+                y: wall_with / 2 + wall_material_width / 2,
+                layer: LAYER_SCENE_MAIN
+            });
+
+            //WALL MATERIAL
+
+            
+
+            ObjFactory.createBox({
+
+                height:wall_height - wall_with,
+                width:room_size,
+                depth:wall_material_width,
+
+                z: room_size/2 * -1,
+                y: wall_height/2,
+
+                color: wall_color, 
+                layer: LAYER_SCENE_MAIN
+
+            });
+
+            
+
+            ObjFactory.createBox({
+
+                height: wall_height - wall_with,
+                width: wall_material_width ,
+                depth: room_size,
+
+                x: room_size / 2 * -1 + wall_with / 2,
+                y: wall_height / 2,
+                z: 0,
+
+                color: wall_color, 
+                layer: LAYER_SCENE_MAIN
+
+            });
+
+            
+
+            var animate = function () {
+                requestAnimationFrame( animate );
+                renderer.render( scene, camera );
+            };
+
+            animate();
+
+
+            /*
+
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+            var cube = new THREE.Mesh( geometry, material );
+            scene.add( cube );
+
+            camera.position.z = 5;
+
+            var animate = function () {
+                requestAnimationFrame( animate );
+
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+
+                renderer.render( scene, camera );
+            };
+
+            animate();
+
+            */
+
+		</script>
+
+        
+
+    </body>
+
+</html>

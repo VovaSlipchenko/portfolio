@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+        
+    </head>
+    <body>
+        <div id="stage" style="width:100%; height: 100%;"></div>
+    </body>
+
+    <script src="script.js"></script>
+    <script src="scripts/card.js"></script>
+    <script src="scripts/cardstuck.js"></script>
+    <script src="scripts/stage.js"></script>
+    <script>
+        let block = document.getElementById("stage");
+        let stage = new SolitareStage(window, block);
+        window.addEventListener("mousemove", function(event){ stage.eventOnMouseMove(event); });
+    </script>
+</html>

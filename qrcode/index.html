@@ -1,0 +1,60 @@
+<html>
+
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <script src="qrcode.js"></script>
+        <script src="script.js"></script>
+    </head>
+
+    <body>
+
+
+        <script>
+
+            var qr = qrcode(4, "H");
+            qr.addData("your content");
+            var x = qr.make();
+
+            var array = [];
+
+            for(var r = 0; r < qr.getModuleCount(); r++){
+
+                if(!array[r]){
+                    array[r] = [];
+                }
+
+                for(var c = 0; c < qr.getModuleCount(); c++){
+                    if(qr.isDark(r, c)){
+                        array[r][c] = 1;
+                    } else {
+                        array[r][c] = 0;
+                    }
+                }
+
+            }
+
+            
+            var test_source1 = 
+            [
+                [0,0,0,0,0,0,0,0],
+                [0,1,1,1,0,0,0,0],
+                [0,1,0,1,0,0,0,0],
+                [0,1,1,1,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+            ];
+
+            array = test_source1;
+            
+            
+
+            
+
+            console.log([...array]);
+
+            var qr_render = new QRCodeRenderer(array, 0);
+
+
+        </script>
+    </body>
+
+</html>

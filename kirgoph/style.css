@@ -1,0 +1,19 @@
+
+*{
+    box-sizing: border-box;
+}
+
+#field{
+    padding:5px;
+    display:flex;
+    flex-wrap: wrap;
+    box-shadow: 6px 9px 13px -5px rgba(0,0,0,0.75);
+    border-radius: 10px;
+}
+
+.field_block{
+    width:70px;
+    height:70px;
+    cursor: pointer;
+    border:1px solid #DDD;
+}
