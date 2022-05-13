@@ -7,9 +7,28 @@ class QRCodeRenderer{
     windth = 200;
     height = 200;
 
-    constructor(source, algorythm){
+    c_width = 0;
+    c_heihgt = 0;
 
-        this.algorythm = algorythm;
+    constructor(source, options){
+
+        this.algorythm = options.algorythm;
+        this.windth = options.width;
+        this.height = options.height;
+
+        this.c_width = source[0].length;
+        this.c_heihgt = source.length;
+
+        console.log('');
+        console.log('Init params:');
+        console.log('');
+
+        console.log('windth:', this.windth);
+        console.log('height:', this.height);
+        console.log('cWidth:', this.c_width);
+        console.log('cHeihgt:', this.c_heihgt);
+        console.log('');
+
         this.source = JSON.parse(JSON.stringify(source));
         const map = new IslandMap(this.source, this.algorythm);
         this.islands = map.getIslands();
@@ -18,17 +37,33 @@ class QRCodeRenderer{
 
         var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-        this.islands.forEach(function(island){
+        this.islands.forEach((island)=>{
             island.getPointsMap();
         });
 
-        this.islands.forEach(function(island){
-            
+        this.islands.forEach((island)=>{
+            this.drawIsland(svg, island);
         });
 
-        console.log('SLANDS:', this.islands);
+        console.log('ISLANDS:', this.islands);
 
 
+
+    }
+
+    drawIsland(svg, island){
+
+        let element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+        island.getPointsPath(1);
+
+
+
+        //Find first points
+        let end = false;
+
+
+        return element;
 
     }
 
@@ -91,6 +126,7 @@ class Island{
     map = [];
     map_inner_islands = [];
     map_points = [];
+    path_points = [];
     inner_islands = [];
     bounds = null;
     algorythm = 0;
@@ -165,27 +201,27 @@ class Island{
                 if(this.map[y][x] == 1){
 
                     if((typeof this.map[y-1][x] == 'undefined' || this.map[y-1][x] == 0) && this.map_inner_islands[y-1][x] == 0){ //top of point
-                        this.map_points[y*2][x*2] = 1;
-                        this.map_points[y*2][x*2+1] = 1;
-                        this.map_points[y*2][x*2+2] = 1;
+                        this.map_points[y*3][x*3] = 1;
+                        this.map_points[y*3][x*3+1] = 1;
+                        this.map_points[y*3][x*3+2] = 1;
                     }
 
                     if((typeof this.map[y+1][x] == 'undefined' || this.map[y+1][x] == 0) && this.map_inner_islands[y+1][x] == 0){ //bottom of point
-                        this.map_points[(y+1)*2][x*2] = 1;
-                        this.map_points[(y+1)*2][x*2+1] = 1;
-                        this.map_points[(y+1)*2][x*2+2] = 1;
+                        this.map_points[y*3+2][x*3] = 1;
+                        this.map_points[y*3+2][x*3+1] = 1;
+                        this.map_points[y*3+2][x*3+2] = 1;
                     }
 
                     if((typeof this.map[y][x-1] == 'undefined' || this.map[y][x-1] == 0) && this.map_inner_islands[y][x-1] == 0){ //left side of point
-                        this.map_points[y*2][x*2] = 1;
-                        this.map_points[y*2+1][x*2] = 1;
-                        this.map_points[y*2+2][x*2] = 1;
+                        this.map_points[y*3][x*3] = 1;
+                        this.map_points[y*3+1][x*3] = 1;
+                        this.map_points[y*3+2][x*3] = 1;
                     }
 
                     if((typeof this.map[y][x+1] == 'undefined' || this.map[y][x+1] == 0) && this.map_inner_islands[y][x+1] == 0){ //right side of point
-                        this.map_points[y*2][(x+1)*2] = 1;
-                        this.map_points[y*2+1][(x+1)*2] = 1;
-                        this.map_points[y*2+2][(x+1)*2] = 1;
+                        this.map_points[y*3][x*3+2] = 1;
+                        this.map_points[y*3+1][x*3+2] = 1;
+                        this.map_points[y*3+2][x*3+2] = 1;
                     }
 
                 }
@@ -193,12 +229,34 @@ class Island{
         }
 
         console.log('Map points:');
-        console.log(this.map_points);
+        console.log_matrix(this.map_points);
 
         this.inner_islands.forEach(function(island){
             console.log('GET INNER ISLAND POINT MAP');
             island.getPointsMap();
         });
+
+    }
+
+    getPointsPath(direction){
+
+        if(direction == 1){ //Left to right
+
+            pointsMain.push({x: island.bounds.min_c*3, y: island.min_r*3});
+            pointsMain.push({x: island.bounds.min_c*3+1, y: island.min_r*3});
+
+            //console.log(island.map_points[island.min_r*3]);
+
+            island.map_points[island.bounds.min_r*3][island.bounds.min_c*3] = 2;
+            island.map_points[island.bounds.min_r*3][island.bounds.min_c*3+1] = 2;
+
+        }
+
+        if(direction == 0){ //Right to left
+
+        }
+
+
 
     }
 
@@ -332,5 +390,43 @@ class Point{
         this.x = x
         this.y = y;
     }
+
+}
+
+console.__proto__.figures = {
+    'rect': {
+        'red': String.fromCodePoint(0x1F7E5),
+        'gray': String.fromCodePoint(0x2B1C),
+        'green': String.fromCodePoint(0x1F7E9),
+        'yellow': String.fromCodePoint(0x1F7E8)
+    }
+}
+
+console.__proto__.log_matrix = function(array, options){
+
+    let colors = options?options:{};
+
+    colors[-1] = colors[-1]?colors[-1]:this.figures.rect.red;
+    colors[0] = colors[0]?colors[0]:this.figures.rect.gray;
+    colors[1] = colors[1]?colors[1]:this.figures.rect.green;
+    colors[2] = colors[2]?colors[2]:this.figures.rect.yellow;
+
+    let unknown = '❔';
+    let log_str = '';
+
+    for(let y = 0; y <= array.length - 1; y++) {
+        console.log(array[y]);
+        for (let x = 0; x <= array[y].length - 1; x++) {
+            if(typeof colors[array[y][x]] != undefined){
+                log_str += colors[array[y][x]];
+            } else {
+                log_str += unknown;
+            }
+        }
+
+        log_str+="\r\n";
+    }
+
+    console.log(log_str);
 
 }

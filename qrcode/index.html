@@ -9,6 +9,8 @@
     <body>
 
 
+        <div id="qr_holder"></div>
+
         <script>
 
             var qr = qrcode(4, "H");
@@ -37,9 +39,9 @@
             var test_source1 = 
             [
                 [0,0,0,0,0,0,0,0],
+                [0,0,1,1,0,0,0,0],
                 [0,1,1,1,0,0,0,0],
-                [0,1,0,1,0,0,0,0],
-                [0,1,1,1,0,0,0,0],
+                [0,1,1,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0],
             ];
 
@@ -51,7 +53,7 @@
 
             console.log([...array]);
 
-            var qr_render = new QRCodeRenderer(array, 0);
+            var qr_render = new QRCodeRenderer(array, { algorythm: 0, width: 200, height: 200, parent: document.getElementById('qr_holder') });
 
 
         </script>
