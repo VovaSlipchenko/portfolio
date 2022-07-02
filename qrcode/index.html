@@ -35,27 +35,30 @@
 
             }
 
-            
-            var test_source1 = 
+
+
+
+            /*
+            var test_source1 =
             [
-                [0,0,0,0,0,0,0,0],
-                [0,0,1,1,0,0,0,0],
-                [0,1,1,1,0,0,0,0],
-                [0,1,1,0,0,0,0,0],
+                [1,1,1,1,1,1,1,0],
+                [1,0,0,0,0,0,1,0],
+                [1,0,0,0,0,0,1,0],
+                [1,0,0,0,0,0,1,0],
+                [1,0,0,0,0,0,1,0],
+                [1,0,0,0,0,0,1,0],
+                [1,1,1,1,1,1,1,0],
                 [0,0,0,0,0,0,0,0],
             ];
 
             console.log_matrix(test_source1);
 
             array = test_source1;
-            
-            
+            */
 
-            
+            console.log_matrix([...array]);
 
-            console.log([...array]);
-
-            var qr_render = new QRCodeRenderer(array, { algorythm: 0, width: 200, height: 200, parent: document.getElementById('qr_holder') });
+            var qr_render = new QRCodeRenderer(array, { algorythm: 0, width: 500, height: 500, parent: document.getElementById('qr_holder') });
 
 
         </script>
