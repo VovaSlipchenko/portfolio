@@ -183,12 +183,14 @@ class Island{
     }
 
     getPointsMap(){
-        
+
         this.map_points = new Array(this.map.length * 3);
+        this.map_points_coords = new Array(this.map.length * 3);
 
         for(let y = 0; y < this.map.length * 3; y++){
 
             this.map_points[y] = new Array(this.map[0].length * 3);
+            this.map_points_coords[y] = new Array(this.map[0].length * 3);
 
             for(let x = 0; x < this.map[0].length * 3; x++){
                 this.map_points[y][x] = 0;
@@ -196,32 +198,57 @@ class Island{
 
         }
 
+        const mul = 2;
+        const step = 20;
+
         for(let y = this.bounds.min_r; y <= this.bounds.max_r; y++){
             for(let x = this.bounds.min_c; x <= this.bounds.max_c; x++){
                 if(this.map[y][x] == 1){
 
                     if((typeof this.map[y-1][x] == 'undefined' || this.map[y-1][x] == 0) && this.map_inner_islands[y-1][x] == 0){ //top of point
-                        this.map_points[y*2][x*2] = 1;
-                        this.map_points[y*2][x*2+1] = 1;
-                        this.map_points[y*2][x*2+2] = 1;
+
+                        this.map_points[y*mul][x*mul] = 1;
+                        this.map_points[y*mul][x*mul+1] = 1;
+                        this.map_points[y*mul][x*mul+2] = 1;
+
+                        this.map_points_coords[y*mul][x*mul]   = { x: x * step, y: y * step};
+                        this.map_points_coords[y*mul][x*mul+1] = { x: x * step + step / 2, y: y * step};
+                        this.map_points_coords[y*mul][x*mul+2] = { x: x * step + step, y: y * step};
                     }
 
                     if((typeof this.map[y+1][x] == 'undefined' || this.map[y+1][x] == 0) && this.map_inner_islands[y+1][x] == 0){ //bottom of point
-                        this.map_points[y*2+2][x*2] = 1;
-                        this.map_points[y*2+2][x*2+1] = 1;
-                        this.map_points[y*2+2][x*2+2] = 1;
+
+                        this.map_points[y*mul+2][x*mul] = 1;
+                        this.map_points[y*mul+2][x*mul+1] = 1;
+                        this.map_points[y*mul+2][x*mul+2] = 1;
+
+                        this.map_points_coords[y*mul+2][x*mul]   = { x: x * step, y: y * step + step};
+                        this.map_points_coords[y*mul+2][x*mul+1] = { x: x * step + step / 2, y: y * step  + step};
+                        this.map_points_coords[y*mul+2][x*mul+2] = { x: x * step + step, y: y * step + step};
+
                     }
 
                     if((typeof this.map[y][x-1] == 'undefined' || this.map[y][x-1] == 0) && this.map_inner_islands[y][x-1] == 0){ //left side of point
-                        this.map_points[y*2][x*2] = 1;
-                        this.map_points[y*2+1][x*2] = 1;
-                        this.map_points[y*2+2][x*2] = 1;
+
+                        this.map_points[y*mul][x*mul] = 1;
+                        this.map_points[y*mul+1][x*mul] = 1;
+                        this.map_points[y*mul+2][x*mul] = 1;
+
+                        this.map_points_coords[y*mul][x*mul]   = { x: x * step, y: y * step};
+                        this.map_points_coords[y*mul+1][x*mul] = { x: x * step, y: y * step + step / 2};
+                        this.map_points_coords[y*mul+2][x*mul] = { x: x * step, y: y * step + step};
+
                     }
 
                     if((typeof this.map[y][x+1] == 'undefined' || this.map[y][x+1] == 0) && this.map_inner_islands[y][x+1] == 0){ //right side of point
-                        this.map_points[y*2][x*2+2] = 1;
-                        this.map_points[y*2+1][x*2+2] = 1;
-                        this.map_points[y*2+2][x*2+2] = 1;
+
+                        this.map_points[y*mul][x*mul+2] = 1;
+                        this.map_points[y*mul+1][x*mul+2] = 1;
+                        this.map_points[y*mul+2][x*mul+2] = 1;
+
+                        this.map_points_coords[y*mul][x*mul+2]   = { x: x * step + step, y: y * step};
+                        this.map_points_coords[y*mul+1][x*mul+2] = { x: x * step + step, y: y * step + step / 2};
+                        this.map_points_coords[y*mul+2][x*mul+2] = { x: x * step + step, y: y * step + step};
                     }
 
                 }
@@ -230,6 +257,8 @@ class Island{
 
         console.log('Map points:');
         console.log_matrix(this.map_points);
+        console.log('Map coords:');
+        console.log(this.map_points_coords);
 
         this.inner_islands.forEach(function(island){
             console.log('GET INNER ISLAND POINT MAP');
@@ -240,15 +269,37 @@ class Island{
 
     getPointsPath(direction){
 
+        let pointsMain = new Array();
+        let current_x = false;
+        let current_y = false;
+
+        const checks = [{x:0, y: -1},{x:0, y: 1},{x:1, y: 0},{x:-1, y: 0}];
+
         if(direction == 1){ //Left to right
 
-            pointsMain.push({x: island.bounds.min_c*3, y: island.min_r*3});
-            pointsMain.push({x: island.bounds.min_c*3+1, y: island.min_r*3});
+            //find_first_point
 
-            //console.log(island.map_points[island.min_r*3]);
+            for(let y = 0; y <= this.map_points.length-1; y++){
+                for(let x = 0; x <= this.map_points[y].length-1; x++) {
+                    if(this.map_points[y][x] == 1 && current_x === false && current_y === false){
+                        current_x = x;
+                        current_y = y;
+                        break;
+                    }
+                }
+            }
 
-            island.map_points[island.bounds.min_r*3][island.bounds.min_c*3] = 2;
-            island.map_points[island.bounds.min_r*3][island.bounds.min_c*3+1] = 2;
+            console.log('START WITH: ',[current_x, current_y]);
+
+            this.map_points[current_y][current_x] = 2;
+            console.log(this.map_points_coords[current_y]);
+            pointsMain.push(this.map_points_coords[current_y][current_x]);
+            current_x++;
+            this.map_points[current_y][current_x] = 2;
+            pointsMain.push(this.map_points_coords[current_y][current_x]);
+
+            console.log(pointsMain);
+
 
         }
 
@@ -256,6 +307,24 @@ class Island{
 
         }
 
+        for(var i = 0; i < 100; i++){
+
+            checks.forEach(c=>{
+                if(this.map_points[current_y+c.y][current_x+c.x] == 1){
+                    current_y += c.y;
+                    current_x += c.x;
+                    console.log('CURRENT WITH: ',[current_x, current_y]);
+                    console.log(this.map_points_coords[current_y][current_x]);
+                    this.map_points[current_y][current_x] = 2;
+                    pointsMain.push(this.map_points_coords[current_y][current_x]);
+                }
+            })
+
+
+        }
+
+        console.log('FINAL:');
+        console.log(pointsMain);
 
 
     }
@@ -313,7 +382,7 @@ class RecursiveChecker{
             if(r == bounds.min_r || r == bounds.max_r){
                 return true;
             }
-            
+
             if(c == bounds.max_c || c == bounds.min_c){
                 return true;
             }
@@ -321,9 +390,9 @@ class RecursiveChecker{
             this.source[r][c] = -1;
 
             if(
-                this.recursiveCheckBounds(r + 1,c, type, bounds) || 
-                this.recursiveCheckBounds(r - 1,c, type, bounds) || 
-                this.recursiveCheckBounds(r, c + 1, type, bounds) || 
+                this.recursiveCheckBounds(r + 1,c, type, bounds) ||
+                this.recursiveCheckBounds(r - 1,c, type, bounds) ||
+                this.recursiveCheckBounds(r, c + 1, type, bounds) ||
                 this.recursiveCheckBounds(r, c - 1, type, bounds)
             ) return true;
 
