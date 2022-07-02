@@ -69,6 +69,22 @@ class QRCodeRenderer{
             path += 'L '+(Math.round(point.x * 100) / 100)+' '+(Math.round(point.y * 100) / 100)+' ';
         });
 
+        island.inner_islands.forEach(inner=>{
+
+            console.log('island inner:', inner);
+
+            var path_inner = inner.getPointsPath(0);
+
+            console.log('PATH INNER:',path_inner);
+
+            path += 'M '+path_inner[0].x+' '+path_inner[0].y+' ';
+
+            path_inner.forEach(point=>{
+                path += 'L '+(Math.round(point.x * 100) / 100)+' '+(Math.round(point.y * 100) / 100)+' ';
+            });
+
+        });
+
         element.setAttribute('d', path);
 
         svg.appendChild(element);
@@ -149,7 +165,7 @@ class Island{
 
     constructor(map, bounds, algorythm){
 
-        console.log('-------------> ISLAND CONSTRUCTOR', map, bounds);
+        //console.log('-------------> ISLAND CONSTRUCTOR', map, bounds);
 
         this.map = JSON.parse(JSON.stringify(map));
         this.map_inner_islands = this.map.map(array=> { return array.map( el => { return 0; } ); });
@@ -158,7 +174,7 @@ class Island{
 
         //Look for inner islands
 
-        console.log('GET INNER ISLANDS:');
+        //console.log('GET INNER ISLANDS:');
 
         var inner_algorythm = 0;
         if(!this.algorythm) inner_algorythm = 1;
@@ -173,7 +189,7 @@ class Island{
                     let result = recursiveChecker.recursiveCheckBounds(rx, cx, 0, bounds);
 
                     if(!result){
-                        console.log('SET INNER MAP 1');
+                        //console.log('SET INNER MAP 1');
                         this.map_inner_islands[rx][cx] = 1;
                         inner_islands_found = true;
                     }
@@ -186,12 +202,12 @@ class Island{
 
         if(inner_islands_found){
 
-            console.log('Create inner islands:');
+            //console.log('Create inner islands:');
 
             const island_map = new IslandMap(this.map_inner_islands, this.algorythm);
             this.inner_islands = island_map.getIslands();
 
-            console.log('MAP OF INNER ISLANDS', this.map_inner_islands);
+            //console.log('MAP OF INNER ISLANDS', this.map_inner_islands);
             //console.log(this.inner_islands);
 
         }
@@ -280,12 +296,12 @@ class Island{
         console.log('Map coords:');
         console.log(this.map_points_coords);
 
-        /*
-        this.inner_islands.forEach(function(island){
+
+        this.inner_islands.forEach(island => {
             console.log('GET INNER ISLAND POINT MAP');
             island.getPointsMap(step);
         });
-        */
+
 
     }
 
@@ -297,24 +313,25 @@ class Island{
 
         const checks = [{x:0, y: -1},{x:0, y: 1},{x:1, y: 0},{x:-1, y: 0}];
 
+        for(let y = 0; y <= this.map_points.length-1; y++){
+            for(let x = 0; x <= this.map_points[y].length-1; x++) {
+                if(this.map_points[y][x] == 1 && current_x === false && current_y === false){
+                    current_x = x;
+                    current_y = y;
+                    break;
+                }
+            }
+        }
+
         if(direction == 1){ //Left to right
 
             //find_first_point
 
-            for(let y = 0; y <= this.map_points.length-1; y++){
-                for(let x = 0; x <= this.map_points[y].length-1; x++) {
-                    if(this.map_points[y][x] == 1 && current_x === false && current_y === false){
-                        current_x = x;
-                        current_y = y;
-                        break;
-                    }
-                }
-            }
+
 
             console.log('START WITH: ',[current_x, current_y]);
 
             this.map_points[current_y][current_x] = 2;
-            console.log(this.map_points_coords[current_y]);
             pointsMain.push(this.map_points_coords[current_y][current_x]);
             current_x++;
             this.map_points[current_y][current_x] = 2;
@@ -326,6 +343,17 @@ class Island{
         }
 
         if(direction == 0){ //Right to left
+
+            console.log('START WITH: ',[current_x, current_y]);
+
+            current_x++;
+            this.map_points[current_y][current_x] = 2;
+            pointsMain.push(this.map_points_coords[current_y][current_x]);
+            current_x--;
+            this.map_points[current_y][current_x] = 2;
+            pointsMain.push(this.map_points_coords[current_y][current_x]);
+
+            console.log(pointsMain);
 
         }
 
