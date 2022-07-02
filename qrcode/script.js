@@ -201,27 +201,27 @@ class Island{
                 if(this.map[y][x] == 1){
 
                     if((typeof this.map[y-1][x] == 'undefined' || this.map[y-1][x] == 0) && this.map_inner_islands[y-1][x] == 0){ //top of point
-                        this.map_points[y*3][x*3] = 1;
-                        this.map_points[y*3][x*3+1] = 1;
-                        this.map_points[y*3][x*3+2] = 1;
+                        this.map_points[y*2][x*2] = 1;
+                        this.map_points[y*2][x*2+1] = 1;
+                        this.map_points[y*2][x*2+2] = 1;
                     }
 
                     if((typeof this.map[y+1][x] == 'undefined' || this.map[y+1][x] == 0) && this.map_inner_islands[y+1][x] == 0){ //bottom of point
-                        this.map_points[y*3+2][x*3] = 1;
-                        this.map_points[y*3+2][x*3+1] = 1;
-                        this.map_points[y*3+2][x*3+2] = 1;
+                        this.map_points[y*2+2][x*2] = 1;
+                        this.map_points[y*2+2][x*2+1] = 1;
+                        this.map_points[y*2+2][x*2+2] = 1;
                     }
 
                     if((typeof this.map[y][x-1] == 'undefined' || this.map[y][x-1] == 0) && this.map_inner_islands[y][x-1] == 0){ //left side of point
-                        this.map_points[y*3][x*3] = 1;
-                        this.map_points[y*3+1][x*3] = 1;
-                        this.map_points[y*3+2][x*3] = 1;
+                        this.map_points[y*2][x*2] = 1;
+                        this.map_points[y*2+1][x*2] = 1;
+                        this.map_points[y*2+2][x*2] = 1;
                     }
 
                     if((typeof this.map[y][x+1] == 'undefined' || this.map[y][x+1] == 0) && this.map_inner_islands[y][x+1] == 0){ //right side of point
-                        this.map_points[y*3][x*3+2] = 1;
-                        this.map_points[y*3+1][x*3+2] = 1;
-                        this.map_points[y*3+2][x*3+2] = 1;
+                        this.map_points[y*2][x*2+2] = 1;
+                        this.map_points[y*2+1][x*2+2] = 1;
+                        this.map_points[y*2+2][x*2+2] = 1;
                     }
 
                 }
