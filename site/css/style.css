@@ -1,0 +1,88 @@
+@font-face {
+    font-family: Consolas;
+    src: url(../fonts/CONSOLA.ttf);
+}
+
+@font-face {
+    font-family: ConsolasBold;
+    src: url(../fonts/CONSOLAB.ttf);
+}
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin:0px;
+    padding:0px;
+    font-size:14px;
+    font-family: Consolas;
+    font-size: 14px;
+    min-height: 100%;
+}
+
+.wrapper{
+    max-width: 1100px;
+    margin:0 auto;
+}
+
+
+.center-holder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:100%;
+}
+
+.row{
+    width:100%;
+    display:flex;
+}
+
+.col-6{
+    width:50%;
+}
+
+.p-20{
+    padding:20px;
+}
+
+/*-----BLOCK ABOUT-----*/
+
+#main-photo{
+    width:220px;
+    height:300px;
+    background:#EEE;
+    float:right;
+}
+
+#main-title-1{
+    font-size:52px;
+    line-height:52px;
+    font-family: ConsolasBold;
+}
+
+#main-title-2{
+    font-size:18px;
+    padding-top:0px;
+    opacity: 0;
+    transition: 1s all;
+}
+
+#main-title-2.active{
+    padding-top:10px;
+    opacity:1;
+}
+
+@keyframes example {
+    0% {opacity: 1;}
+    50% {opacity: 0;}
+}
+
+.blinking-cursor{
+    animation-name: example;
+    animation-duration: 1s;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    animation-timing-function: step-end;
+}

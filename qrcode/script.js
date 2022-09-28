@@ -484,7 +484,6 @@ class Bounds{
 
     setBounds(r,c){
 
-
         if(this.min_r === null || this.min_r > r){
             this.min_r = r;
         }
