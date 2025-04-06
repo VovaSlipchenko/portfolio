@@ -1,8 +1,8 @@
 
         class WorkingStage{
 
-            #width = 12;
-            #height = 10;
+            #width = 13;
+            #height = 11;
 
             #cell_size = 70;
 
@@ -51,8 +51,6 @@
                     
                 }
 
-                console.log(this.#field);
-
                 this.render();
 
             }
@@ -80,19 +78,41 @@
             }
 
             eventOnMouseMove(event){
-                //console.log(event.layerX,event.layerY);
-                const current_cell = this.getCurrentCellByCoords(event.layerX, event.layerY);
 
-                console.log(current_cell, this.#previous_seletected_cell);
+                const current_cell = this.getCurrentCellByCoords(event.offsetX, event.offsetY);
+                const field_manager = new FieldManager(this.#field, this.#field_temp);
+
+                this.#current_mode_element.x = current_cell.x;
+                this.#current_mode_element.y = current_cell.y;
 
                 if(current_cell.x != this.#previous_seletected_cell.x || current_cell.y != this.#previous_seletected_cell.y){
 
-                    console.log('CELL CHANGED');
-
+                    
+                    
                     if(this.#current_mode == WorkingStageModes.MODE_ADD_ELEMENT){
 
-                        let elems = this.#current_mode_element.createElement(current_cell.x, current_cell.y,0,0);
-                        this.updateTempField(elems);
+                        let existed_element = field_manager.getElement(current_cell.x, current_cell.y, true);
+
+                        console.log('existed_element', existed_element);
+                        console.log('current_mode_element', this.#current_mode_element);
+
+                        if(!existed_element || (existed_element && existed_element.constructor != this.#current_mode_element.constructor)){
+
+                            let elems = this.#current_mode_element.createElement(
+                                current_cell.x, 
+                                current_cell.y, 
+                                0, 
+                                this.#current_mode_element.direction, 
+                                field_manager);
+                            this.updateTempField(elems);
+
+                        }
+
+                    }
+
+                    if(this.#current_mode == WorkingStageModes.MODE_REMOVE_ELEMENT){
+                        
+                        this.updateTempField([new ElementEraser(current_cell.x, current_cell.y)]);
 
                     }
 
@@ -105,44 +125,52 @@
 
             eventOnMouseWheel(event){
 
-                const current_cell = this.getCurrentCellByCoords(event.layerX, event.layerY);
-
-                if(this.#current_mode == WorkingStageModes.MODE_SELECT_ELEMENT){
-                    if(this.#field[current_cell.y][current_cell.x]){
-                        this.#field[current_cell.y][current_cell.x].nextDirection();
-                    }
-                }
-
                 if(this.#current_mode == WorkingStageModes.MODE_ADD_ELEMENT){
-                    this.#current_mode_element.nextDirection();
-                    let elems = this.#current_mode_element.createElement(current_cell.x, current_cell.y,0,0);
-                    this.updateTempField(elems);
+
+                    const current_cell = this.getCurrentCellByCoords(event.offsetX, event.offsetY);
+                    const field_manager = new FieldManager(this.#field, this.#field_temp);
+
+                    if(this.#current_mode == WorkingStageModes.MODE_SELECT_ELEMENT){
+                        if(this.#field[current_cell.y][current_cell.x]){
+                            this.#field[current_cell.y][current_cell.x].nextDirection();
+                        }
+                    }
+
+                    if(this.#current_mode == WorkingStageModes.MODE_ADD_ELEMENT){
+                        this.#current_mode_element.nextDirection(1, field_manager);
+
+                        let elems = this.#current_mode_element.createElement(current_cell.x, current_cell.y, 0, this.#current_mode_element.direction, field_manager);
+                        this.updateTempField(elems);
+                    }
+
                 }
 
             }
 
             eventOnMouseClick(event){
 
-                const current_cell = this.getCurrentCellByCoords(event.layerX, event.layerY);
 
-                console.log('Click on:',current_cell);
+                const current_cell = this.getCurrentCellByCoords(event.offsetX, event.offsetY);
+                const field_manager = new FieldManager(this.#field, this.#field_temp);
 
                 if(this.#current_mode == WorkingStageModes.MODE_ADD_ELEMENT){
 
                     this.#current_mode_element.eventClick(current_cell.x, current_cell.y);
-
-                    let elems = this.#current_mode_element.createElement(current_cell.x, current_cell.y,0,0);
-
-                    console.log('Returned elements:', elems);
+                    let elems = this.#current_mode_element.createElement(current_cell.x, current_cell.y, field_manager.getElementNextNumber(this.#current_mode_element.param_letter), this.#current_mode_element.direction, field_manager);
 
                     if(elems){
                         this.#current_mode_element.eventElementAdded();
                         for(let i = 0; i < elems.length; i++){
                             this.#field[elems[i].y][elems[i].x] = elems[i];
-                            console.log('ADD ELEM ['+elems[i].x+'|'+elems[i].y+']s');
-                            console.log(this.#field);
                         }
                     }
+                    
+                    this.render();
+
+                }
+
+                if(this.#current_mode == WorkingStageModes.MODE_REMOVE_ELEMENT){
+                    field_manager.removeElement(current_cell.x, current_cell.y);
                     this.render();
                 }
 
@@ -150,7 +178,6 @@
 
             eventOnMouseRightClick(event){
                 event.preventDefault();
-                this.setMode(WorkingStageModes.MODE_ADD_ELEMENT, new ElementPower(0,0,0,0));
             }
 
 
@@ -169,11 +196,7 @@
                 this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
                 this.drawNet();
 
-                console.log('render');
-
                 const field_manager = new FieldManager(this.#field, this.#field_temp);
-
-                console.log(this.#field);
 
                 for(let y = 0; y < this.#field.length; y++){
                     for(let x = 0; x < this.#field[y].length; x++){

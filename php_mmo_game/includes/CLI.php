@@ -278,27 +278,27 @@ class CLI{
         echo "\033[?25l";
     }
 
-    public function moveCursorUp($lines = 1)
+    public static function moveCursorUp($lines = 1)
     {
         echo "\033[".$lines."A";
     }
 
-    public function moveCursorDown($lines = 1)
+    public static function moveCursorDown($lines = 1)
     {
         echo "\033[".$lines."B";
     }
 
-    public function moveCursorRight($lines = 1)
+    public static function moveCursorRight($lines = 1)
     {
         echo "\033[".$lines."C";
     }
 
-    public function moveCursorLeft($lines = 1)
+    public static function moveCursorLeft($lines = 1)
     {
         echo "\033[".$lines."D";
     }
 
-    public function moveCursorTo($column, $line){
+    public static function moveCursorTo($column, $line){
         echo "\033[".$line.";".$column."f";
     }
 

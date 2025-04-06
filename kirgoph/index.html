@@ -9,6 +9,12 @@
     <body>
         <div id="field">
 
+            <div id="toolbox">
+                <button class="toolbox_button" id="mode_wire">WIRE</button>
+                <button class="toolbox_button" id="mode_eds">EDS</button>
+                <button class="toolbox_button" id="mode_resistor">RESISTOR</button>
+                <button class="toolbox_button" id="mode_eraser">ERASER</button>
+            </div>
             <canvas id="canvas_main"></canvas>
             
         </div>
@@ -17,10 +23,48 @@
     <script>
 
 
-
         let stage = new WorkingStage({
             canvas: document.getElementById('canvas_main')
         });
+
+        //this.setMode(WorkingStageModes.MODE_ADD_ELEMENT, new ElementPower(0,0,0,0));
+
+        document.getElementById('mode_wire').onclick = function(){
+
+            stage.setMode(WorkingStageModes.MODE_ADD_ELEMENT, new ElementWire(0,0,0,0));            
+            removeButtonActive(this);
+            
+
+        }
+
+        document.getElementById('mode_eds').onclick = function(){
+
+            stage.setMode(WorkingStageModes.MODE_ADD_ELEMENT, new ElementPower(0,0,0,0));
+            removeButtonActive(this);
+
+        }
+
+        document.getElementById('mode_resistor').onclick = function(){
+
+            stage.setMode(WorkingStageModes.MODE_ADD_ELEMENT, new ElementResistor(0,0,0,0));
+            removeButtonActive(this);
+
+        }
+
+        document.getElementById('mode_eraser').onclick = function(){
+
+            stage.setMode(WorkingStageModes.MODE_REMOVE_ELEMENT, new ElementEraser(0,0,0,0));
+            removeButtonActive(this);
+
+        }
+
+        function removeButtonActive(elem){
+            var elems = document.getElementsByClassName('toolbox_button');
+            for(var i = 0; i < elems.length; i++){
+                elems[i].classList.remove('active');
+            }            
+            elem.classList.add('active');
+        }
 
         /*
         window.requestAnimationFrame(function(){

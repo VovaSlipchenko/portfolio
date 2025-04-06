@@ -43,12 +43,20 @@ class QRCodeRenderer{
         svg.setAttribute('height', this.height+'px');
         this.parent.appendChild(svg);
 
+        var i = 0;
         this.islands.forEach((island)=>{
-            island.getPointsMap(this.step);
+            //if(i == 1){
+                island.getPointsMap(this.step);
+            //}
+            i++;
         });
 
+        var i = 0;
         this.islands.forEach((island)=>{
-            this.drawIsland(svg, island);
+            //if(i == 1){
+                this.drawIsland(svg, island);
+            //}
+            i++;
         });
 
         console.log('ISLANDS:', this.islands);
@@ -62,27 +70,13 @@ class QRCodeRenderer{
         let element = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
         var path_main = island.getPointsPath(1);
-
-        var path = 'M '+path_main[0].x+' '+path_main[0].y+' ';
-
-        path_main.forEach(point=>{
-            path += 'L '+(Math.round(point.x * 100) / 100)+' '+(Math.round(point.y * 100) / 100)+' ';
-        });
+        let path = this.getSvgPath(path_main);
 
         island.inner_islands.forEach(inner=>{
-
-            console.log('island inner:', inner);
-
+            //console.log('island inner:', inner);
             var path_inner = inner.getPointsPath(0);
-
-            console.log('PATH INNER:',path_inner);
-
-            path += 'M '+path_inner[0].x+' '+path_inner[0].y+' ';
-
-            path_inner.forEach(point=>{
-                path += 'L '+(Math.round(point.x * 100) / 100)+' '+(Math.round(point.y * 100) / 100)+' ';
-            });
-
+            //console.log('PATH INNER:',path_inner);
+            path += this.getSvgPath(path_inner);
         });
 
         element.setAttribute('d', path);
@@ -96,6 +90,65 @@ class QRCodeRenderer{
 
 
         return element;
+
+    }
+
+    getSvgPath(points){
+
+        console.log('------------------------------');
+
+        console.log('Points:', points);
+
+        points.push(points[0]);
+        points.push(points[1]);
+
+        let path = 'M '+points[1].x+' '+points[1].y+' ';
+
+        let i = 1;
+        while(i < points.length - 2){
+
+            //path += 'L '+(points[i+1].x)+' '+(points[i+1].y)+' ';
+            //i++;
+
+            if(this.pointsOnSameAxis([points[i], points[i+1], points[i+2]])){
+                path += 'L '+(points[i+1].x)+' '+(points[i+1].y)+' ';
+                i+=1;
+                //console.log('inc 1');
+            } else {
+                path += 'C '+(points[i].x)+' '+(points[i].y)+' '+(points[i+1].x)+' '+(points[i+1].y)+' '+(points[i+2].x)+' '+(points[i+2].y);
+                i+=2;
+                //console.log('inc 2');
+            }
+
+            //console.log('i = '+i);
+            
+        }
+
+        //points.forEach(point=>{  
+        //});
+
+        return path;
+    }
+
+    pointsOnSameAxis(points){
+
+        const result_x = points.every(point => {
+            if (Math.round(point.x) === Math.round(points[0].x)) {
+              return true;
+            } else {
+                return false;
+            }
+          });
+
+        const result_y = points.every(point => {
+            if (Math.round(point.y) === Math.round(points[0].y)) {
+              return true;
+            } else {
+                return false;
+            }
+        });
+        
+        return result_x || result_y;
 
     }
 
@@ -236,9 +289,6 @@ class Island{
             for(let x = this.bounds.min_c; x <= this.bounds.max_c; x++){
                 if(this.map[y][x] == 1){
 
-
-                    //console.log(y+'x'+x);
-
                     if(y == 0 || (y != 0 && (this.map_inner_islands[y-1][x] == 0 && this.map[y-1][x] == 0))){ //top of point
 
                         this.map_points[y*mul][x*mul] = 1;
@@ -325,10 +375,6 @@ class Island{
 
         if(direction == 1){ //Left to right
 
-            //find_first_point
-
-
-
             console.log('START WITH: ',[current_x, current_y]);
 
             this.map_points[current_y][current_x] = 2;
@@ -358,23 +404,19 @@ class Island{
         }
 
         for(var i = 0; i < 200; i++){
-
             checks.forEach(c=>{
-
                 if(current_y+c.y >= 0 && current_x+c.x >= 0) {
                     if (this.map_points[current_y + c.y][current_x + c.x] == 1) {
                         current_y += c.y;
                         current_x += c.x;
-                        console.log('CURRENT WITH: ', [current_x, current_y]);
-                        console.log(this.map_points_coords[current_y][current_x]);
+                        //console.log('CURRENT WITH: ', [current_x, current_y]);
+                        //console.log(this.map_points_coords[current_y][current_x]);
                         this.map_points[current_y][current_x] = 2;
                         pointsMain.push(this.map_points_coords[current_y][current_x]);
                     }
                 }
 
             })
-
-
         }
 
         console.log('FINAL:');
