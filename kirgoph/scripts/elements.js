@@ -1,7 +1,9 @@
 class Element{
 
+    unit = '';
+
     constructor(){
-            
+        this.unic_id = Math.ceil(Math.random()*1000000);
     }
 
     drawLabel(context, left_real_x, top_real_y){
@@ -13,6 +15,10 @@ class Element{
             context.font = label_font_size+"px Arial";
             context.fillText(this.param_letter+this.number, left_real_x + label_padding, top_real_y + label_font_size);
         }
+
+    }
+
+    drawValue(context, right_real_x, bottom_real_y){
 
     }
 
@@ -54,6 +60,8 @@ class ElementPower extends Element{
         } else {
             this.direction = dir;
         }
+
+        this.unit = 'V';
         
     }
 
@@ -72,9 +80,9 @@ class ElementPower extends Element{
 
         const result = field_manager.getElementsAroundAmount(this.x, this.y);
 
-        console.log('result', result);
-        console.log('result vertical', result.total_elements_vertical);
-        console.log('result horizontal', result.total_elements_horizontal);
+        //console.log('result', result);
+        //console.log('result vertical', result.total_elements_vertical);
+        //console.log('result horizontal', result.total_elements_horizontal);
 
         let allowed_directions = [];
 
@@ -93,14 +101,14 @@ class ElementPower extends Element{
     nextDirection(dir, field_manager){
 
 
-        console.log('------------------------------------------------------------');
+        //console.log('------------------------------------------------------------');
 
-        console.log('x', this.x);
-        console.log('y', this.y);
+        //console.log('x', this.x);
+        //console.log('y', this.y);
 
         let allowed_directions = this.getAllowedDirections(field_manager);
 
-        console.log('allowed_directions', allowed_directions);
+        //console.log('allowed_directions', allowed_directions);
 
         if(allowed_directions.includes(this.direction)){
             if(allowed_directions.indexOf(this.direction) == 0){
@@ -112,10 +120,10 @@ class ElementPower extends Element{
             this.direction = allowed_directions[0];
         }
 
-        console.log('Direction '+this.direction);
+        //console.log('Direction '+this.direction);
     }
 
-    eventClick(x, y){
+    eventClick(x, y, field_manager){
 
     }
 
@@ -127,9 +135,7 @@ class ElementPower extends Element{
         if(!this.checkError(field_manager)){
             return [new ElementPower(x, y, number, direction, field_manager)];
         }
-    }
-
-    
+    }    
 
     render(context, cell_size, field_manager){
 
@@ -243,6 +249,7 @@ class ElementResistor extends Element{
         this.y = y;
         this.number = number;
         this.direction = 0;
+        this.unit = 'Ω';
     }
 
     direction = 0;
@@ -260,7 +267,7 @@ class ElementResistor extends Element{
 
     }
 
-    eventClick(x, y){
+    eventClick(x, y, field_manager){
 
     }
 
@@ -361,7 +368,7 @@ class ElementWire extends Element{
 
     }
 
-    eventClick(x, y){
+    eventClick(x, y, field_manager){
 
         if(this.add_from_x !== false && this.add_to_x === false){
             this.add_to_x = x;
@@ -369,13 +376,20 @@ class ElementWire extends Element{
         }
 
         if(this.add_from_x === false){
-            this.add_from_x = x;
-            this.add_from_y = y;
+            if(!this.checkError(field_manager)){
+                console.log('click ok');
+                this.add_from_x = x;
+                this.add_from_y = y;
+            } else {
+                console.log('click error');
+            }
         }
 
     }
 
     eventElementAdded(){
+
+        console.log('eventElementAdded');
 
         this.add_from_x = false;
         this.add_from_y = false;
@@ -451,6 +465,14 @@ class ElementWire extends Element{
     }
 
     checkError(field_manager){
+
+        const result = field_manager.getElementsAroundAmount(this.x, this.y);
+
+        if(result.total_elements == 2 && result.total_elements_vertical == 1 && result.total_elements_horizontal == 1){
+            console.log('CORNER ERROR');
+            return true;
+        }
+
         return false;   
     }
 
@@ -547,7 +569,7 @@ class ElementEraser extends Element{
 
     }
 
-    eventClick(x, y){
+    eventClick(x, y, field_manager){
 
 
     }
@@ -569,7 +591,7 @@ class ElementEraser extends Element{
 
     render(context, cell_size, field_manager){
 
-        console.log('render eraser');
+        //console.log('render eraser');
 
         const center_real_x = this.x * cell_size + cell_size / 2;
         const center_real_y = this.y * cell_size + cell_size / 2;

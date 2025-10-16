@@ -2,12 +2,16 @@
         class WorkingStage{
 
             #width = 13;
-            #height = 11;
+            #height = 9;
 
             #cell_size = 70;
 
+            #table = null;
             #canvas = null;
             #context = null;
+
+            #tableEds = null;
+            #tableRes = null;
 
             #field = [];
             #field_temp = [];
@@ -19,6 +23,7 @@
 
             constructor(options){
 
+                this.#table = options.table;
                 this.#canvas = options.canvas;
                 this.#context = this.#canvas.getContext('2d');
 
@@ -52,6 +57,7 @@
                 }
 
                 this.render();
+                this.initTable();
 
             }
 
@@ -93,8 +99,8 @@
 
                         let existed_element = field_manager.getElement(current_cell.x, current_cell.y, true);
 
-                        console.log('existed_element', existed_element);
-                        console.log('current_mode_element', this.#current_mode_element);
+                        //console.log('existed_element', existed_element);
+                        //console.log('current_mode_element', this.#current_mode_element);
 
                         if(!existed_element || (existed_element && existed_element.constructor != this.#current_mode_element.constructor)){
 
@@ -155,7 +161,7 @@
 
                 if(this.#current_mode == WorkingStageModes.MODE_ADD_ELEMENT){
 
-                    this.#current_mode_element.eventClick(current_cell.x, current_cell.y);
+                    this.#current_mode_element.eventClick(current_cell.x, current_cell.y, field_manager);
                     let elems = this.#current_mode_element.createElement(current_cell.x, current_cell.y, field_manager.getElementNextNumber(this.#current_mode_element.param_letter), this.#current_mode_element.direction, field_manager);
 
                     if(elems){
@@ -166,12 +172,14 @@
                     }
                     
                     this.render();
+                    this.renderTable();
 
                 }
 
                 if(this.#current_mode == WorkingStageModes.MODE_REMOVE_ELEMENT){
                     field_manager.removeElement(current_cell.x, current_cell.y);
                     this.render();
+                    this.renderTable();
                 }
 
             }
@@ -179,8 +187,6 @@
             eventOnMouseRightClick(event){
                 event.preventDefault();
             }
-
-
 
             setMode(mode, element){
                 this.#current_mode = mode;
@@ -191,7 +197,27 @@
                 return {x: Math.floor(x / this.#cell_size), y: Math.floor(y / this.#cell_size) }
             }
 
+            initTable(){
+
+                let holderEds = document.createElement("div");
+                holderEds.className = 'table-holder';
+                this.#tableEds = holderEds;
+                this.#table.appendChild(holderEds);
+
+                let holderRes = document.createElement("div");
+                holderRes.className = 'table-holder';
+                this.#tableRes = holderRes;
+                this.#table.appendChild(holderRes);
+
+            }
+
+            renderTable(){
+
+            }
+
             render(){
+
+                //console.log('render');
 
                 this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
                 this.drawNet();

@@ -16,6 +16,7 @@
                 <button class="toolbox_button" id="mode_eraser">ERASER</button>
             </div>
             <canvas id="canvas_main"></canvas>
+            <div id="canvas_table"></div>
             
         </div>
     </body>
@@ -24,7 +25,8 @@
 
 
         let stage = new WorkingStage({
-            canvas: document.getElementById('canvas_main')
+            canvas: document.getElementById('canvas_main'),
+            table: document.getElementById('canvas_table'),
         });
 
         //this.setMode(WorkingStageModes.MODE_ADD_ELEMENT, new ElementPower(0,0,0,0));

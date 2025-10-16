@@ -47,7 +47,9 @@ class FieldManager{
     }
 
     getElementNextNumber(letter){
+
         let amount = 0;
+
         this.#field.forEach(row=>{
             row.forEach(elem=>{
                 if(elem.param_letter == letter){
@@ -55,7 +57,33 @@ class FieldManager{
                 }
             });
         });
-        return amount + 1;
+
+        let recount = false;
+
+        this.#field.forEach(row=>{
+            row.forEach(elem=>{
+                if(elem.param_letter == letter && elem.number == (amount+1)){
+                    recount = true;
+                }
+            });
+        });
+
+        if(recount){
+            console.log('RECOUNT');
+            let n = 0;
+            this.#field.forEach(row=>{
+                row.forEach(elem=>{
+                    if(elem.param_letter == letter){
+                        n++;
+                        elem.number = n;                        
+                    }
+                });
+            });
+        }        
+
+        let number = amount + 1;
+
+        return number;
     }
 
     getElementsAroundAmount(x,y){
