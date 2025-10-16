@@ -10,8 +10,7 @@
             #canvas = null;
             #context = null;
 
-            #tableEds = null;
-            #tableRes = null;
+            #tables = {};
 
             #field = [];
             #field_temp = [];
@@ -38,6 +37,8 @@
                 this.#canvas.onmousemove = this.eventOnMouseMove.bind(this);
                 this.#canvas.onwheel = this.eventOnMouseWheel.bind(this);
                 this.#canvas.oncontextmenu = this.eventOnMouseRightClick.bind(this);
+
+                this.#tables = {};
 
                 /*
                 this.#field = Array(this.#height).fill(Array(this.#width).fill(false));
@@ -199,19 +200,53 @@
 
             initTable(){
 
-                let holderEds = document.createElement("div");
-                holderEds.className = 'table-holder';
-                this.#tableEds = holderEds;
-                this.#table.appendChild(holderEds);
+                console.log('--------------- initTable', this);
 
-                let holderRes = document.createElement("div");
-                holderRes.className = 'table-holder';
-                this.#tableRes = holderRes;
-                this.#table.appendChild(holderRes);
+                const holders = ['E','R'];
+                holders.forEach(letter=>{
+                    let holder = document.createElement("div");
+                    holder.className = 'editor-table-holder';
+                    this.#tables[letter] = holder;
+                    this.#table.appendChild(holder);
+                });
 
             }
 
             renderTable(){
+
+                console.log('----------------- renderTable');
+
+                for(let y = 0; y < this.#field.length; y++){
+                    for(let x = 0; x < this.#field[y].length; x++){
+
+                        if(this.#field[y][x] && this.#field[y][x].param_letter){
+
+                            let elem = this.#field[y][x];
+
+                            if(!elem.table_elem){
+
+                                let table_element = document.createElement('div');
+                                table_element.setAttribute('id', 'table_'+elem.unic);
+                                table_element.className = 'editor-table-row';
+                                let label = document.createElement('div');
+                                label.innerHTML = elem.param_letter+elem.number;
+                                let input = document.createElement('input');
+                                input.type = "text";
+                                let units = document.createElement('div');
+                                units.innerHTML = elem.unit;
+
+                                table_element.appendChild(label);
+                                table_element.appendChild(input);
+                                table_element.appendChild(units);
+
+                                this.#tables[elem.param_letter].appendChild(table_element);
+                                elem.setTableElement(table_element);
+
+                            }
+
+                        }
+                    }
+                }
 
             }
 

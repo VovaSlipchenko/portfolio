@@ -17,3 +17,13 @@
     cursor: pointer;
     border:1px solid #DDD;
 }
+
+.editor-table-row{
+    display:flex;
+    margin-bottom:3px;
+    gap:10px;
+}
+
+.editor-table-row input{
+    width:60px;
+}

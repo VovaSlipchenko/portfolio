@@ -36,12 +36,11 @@ class FieldManager{
         console.log('-----------------------------------');
         console.log(element);
         if(element){
+            element.removeTableElement();
             this.#field[y][x] = false;
             let near = this.getElementsAroundAmount(x, y);
             if (near.total_elements > 1){
-                //if(!element instanceof ElementWire){
-                    this.#field[y][x] = new ElementWire(x,y)
-                //}
+                this.#field[y][x] = new ElementWire(x,y);
             }
         }
     }

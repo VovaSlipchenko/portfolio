@@ -18,6 +18,15 @@ class Element{
 
     }
 
+    setTableElement(elem){
+        this.table_elem = elem;
+    }
+
+    removeTableElement(){
+        this.table_elem.remove();
+        this.table_elem = false;
+    }
+
     drawValue(context, right_real_x, bottom_real_y){
 
     }
@@ -249,7 +258,7 @@ class ElementResistor extends Element{
         this.y = y;
         this.number = number;
         this.direction = 0;
-        this.unit = 'Ω';
+        this.unit = 'Ohm';
     }
 
     direction = 0;

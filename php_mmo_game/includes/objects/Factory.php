@@ -10,43 +10,43 @@
 
             if($name == 'wall'){
                 $obj = new GameObject('🧱');
-                $obj->setType(GameObjectTypes::OBSTACLE);
-                $obj->setDesk('wall', 'Wall');
+                $obj->setType(GameObjectTypes::WALL);
+                $obj->setDesk($name, 'Wall');
             }
 
             if($name == 'fence'){
                 $obj = new GameObject('⛩');
-                $obj->setDesk('fence', 'Fence');
+                $obj->setDesk($name, 'Fence');
             }
 
             if($name == 'stone'){
                 $obj = new GameObject('🪨');
-                $obj->setDesk('stone', 'Stone');
+                $obj->setDesk($name, 'Stone');
             }
 
             if($name == 'grawe'){
                 $obj = new GameObject('🪦');
-                $obj->setDesk('grawe', 'Stone');
+                $obj->setDesk($name, 'Stone');
             }
 
             if($name == 'tree'){
                 $obj = new GameObject('🌲');
-                $obj->setDesk('tree', 'Tree');
+                $obj->setDesk($name, 'Tree');
             }
 
             if($name == 'wood'){
                 $obj = new GameObject('🪵');
-                $obj->setDesk('wood', 'Wood');
+                $obj->setDesk($name, 'Wood');
             }
 
             if($name == 'plant'){
                 $obj = new GameObject('🌱');
-                $obj->setDesk('plant', 'Plant');
+                $obj->setDesk($name, 'Plant');
             }
 
             if($name == 'rice'){
                 $obj = new GameObject('🌾');
-                $obj->setDesk('rice', 'Rice');
+                $obj->setDesk($name, 'Rice');
             }
 
             ////////////////////////////////////////////////////////
@@ -54,56 +54,56 @@
 
             if($name == 'fountain'){
                 $obj = new GameObject('⛲');
-                $obj->setDesk('fountain', 'Fountain');
+                $obj->setDesk($name, 'Fountain');
             }
 
             if($name == 'snowman'){
                 $obj = new GameObject('⛄');
-                $obj->setDesk('snowman', 'Snowman');
+                $obj->setDesk($name, 'Snowman');
             }
 
             if($name == 'bell'){
                 $obj = new GameObject('🔔');
-                $obj->setDesk('bell', 'Bell');
+                $obj->setDesk($name, 'Bell');
             }
 
             if($name == 'ladder'){
                 $obj = new GameObject('🪜');
-                $obj->setDesk('ladder', 'Ladder');
+                $obj->setDesk($name, 'Ladder');
             }
 
             if($name == 'chair'){
 
                 $obj = new GameObject('🪑');
-                $obj->setDesk('chair', 'Chair');
+                $obj->setDesk($name, 'Chair');
 
             }
 
             if($name == 'basket'){
 
                 $obj = new GameObject('🧺');
-                $obj->setDesk('basket', 'basket');
+                $obj->setDesk($name, 'Basket');
 
             }
 
             if($name == 'window'){
 
                 $obj = new GameObject('🪟');
-                $obj->setDesk('window', 'window');
+                $obj->setDesk($name, 'Window');
 
             }
 
             if($name == 'bed'){
 
                 $obj = new GameObject('🛏');
-                $obj->setDesk('window', 'window');
+                $obj->setDesk($name, 'bed');
 
             }
 
             if($name == 'amphora'){
 
                 $obj = new GameObject('🏺');
-                $obj->setDesk('amphora', 'amphora');
+                $obj->setDesk($name, 'Amphora');
 
             }
 
@@ -128,7 +128,29 @@
         }
 
         function createLine(&$GAME_STAGE, $type, $x_start, $y_start, $dx, $dy){
-            $obj = $this->createGameObject($type);
+            for($x = $x_start; $x <= $x_start + $dx; $x++){
+                for($y = $y_start; $y <= $y_start + $dy; $y++){
+                    $obj = $this->createGameObject($type, $x, $y);
+                    $GAME_STAGE->addObject($obj);
+                }
+            }
+        }
+
+        function createRectangle(&$GAME_STAGE, $type, $x1, $y1, $x2, $y2){
+            for($x = $x1; $x <= $x2; $x++){
+                $obj = $this->createGameObject($type, $x, $y1);
+                $GAME_STAGE->addObject($obj);
+                $obj = $this->createGameObject($type, $x, $y2);
+                $GAME_STAGE->addObject($obj);
+            }
+
+            for($y = $y1; $y <= $y2; $y++){
+                $obj = $this->createGameObject($type, $x1, $y);
+                $GAME_STAGE->addObject($obj);
+                $obj = $this->createGameObject($type, $x2, $y);
+                $GAME_STAGE->addObject($obj);
+            }
+
         }
 
         function createCreature(&$GAME_STAGE, $type, $x_start, $y){

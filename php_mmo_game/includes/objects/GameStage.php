@@ -2,14 +2,33 @@
 
     class GameStage{
 
+
         private $width = 50;
         private $height = 50;
+
+        private $padLeft = 2;
+        private $padTop = 2;
 
         private $draw_array = Array();
 
         private $players = Array();
         private $objects = Array();
 
+
+
+        public function __construct($width, $height)
+        {
+            $this->width = $width;
+            $this->height = $height;
+        }
+
+        public function getWidth(){
+            return $this->width;
+        }
+
+        public function getHeight(){
+            return $this->height;
+        }
 
         function init(){
 
@@ -39,8 +58,8 @@
 
             $this->draw_array = Array();
 
-            for($x= 0; $x < $this->width; $x++){
-                for($y= 0; $y < $this->height; $y++){
+            for($x= 0; $x <= $this->width; $x++){
+                for($y= 0; $y <= $this->height; $y++){
 
                     $this->draw_array[$x][$y] = null;
 
@@ -53,9 +72,8 @@
             }
 
 
-            for($x= 0; $x < $this->width; $x++){
-                for($y= 0; $y < $this->height; $y++){
-
+            for($x= 0; $x <= $this->width; $x++){
+                for($y= 0; $y <= $this->height; $y++){
                     foreach($this->players as $player){
                         if($player->checkCoords($x, $y)){
                             $this->draw_array[$x][$y] = $player->draw();
@@ -74,10 +92,10 @@
                 $draw_array = $this->draw_array;
             }
 
-            for($x= 0; $x < $this->width; $x++) {
-                for ($y = 0; $y < $this->height; $y++) {
+            for($x= 0; $x <= $this->width; $x++) {
+                for ($y = 0; $y <= $this->height; $y++) {
 
-                    CLI::moveCursorTo($x*2, $y);
+                    CLI::moveCursorTo($x*2+$this->padLeft, $y + $this->padTop);
 
                     if($this->draw_array[$x][$y] == null){
                         echo "  ";
@@ -88,6 +106,14 @@
                 }
             }
 
+        }
+
+        function clearObject($x, $y){
+            foreach($this->objects as $index=>$obj) {
+                if ($obj->checkCoords($x, $y)) {
+                    unset($this->objects[$index]);
+                }
+            }
         }
 
         function getObjectsByCoords($x, $y){

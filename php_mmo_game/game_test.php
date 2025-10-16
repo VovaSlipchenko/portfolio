@@ -69,30 +69,27 @@ exit;
 */
 
 
-$stage = new GameStage(60,60);
+$stage = new GameStage(50,30);
 $factory = new Factory();
 
 $player = new Player(1, 'Vova');
-$player->setCoords(20,20);
+$player->setCoords(25,15);
 
 $stage->addPlayer($player);
 
+$factory->createRectangle($stage, 'wall', 0, 0, $stage->getWidth(),$stage->getHeight());
+$factory->createLine($stage, 'wall', 10, 0, 0, $stage->getHeight());
 
+$factory->createLine($stage, 'wall', 0, 10, 10, 0);
+$factory->createLine($stage, 'wall', 0, 20, 10, 0);
+$stage->clearObject(10,5);
 
-$stage->addObject($factory->createGameObject('wall',1,1));
-$stage->addObject($factory->createGameObject('wall',1,2));
-$stage->addObject($factory->createGameObject('wall',1,3));
-$stage->addObject($factory->createGameObject('wall',1,4));
-$stage->addObject($factory->createGameObject('wall',1,5));
-$stage->addObject($factory->createGameObject('wall',1,6));
-
-$stage->addObject($factory->createGameObject('wall',2,6));
-$stage->addObject($factory->createGameObject('wall',3,6));
-$stage->addObject($factory->createGameObject('wall',4,6));
-$stage->addObject($factory->createGameObject('wall',5,6));
 
 Cli::disableCursor();
 Cli::setMode(true);
+
+$stage->draw();
+$stage->render();
 
 while(true) {
 
