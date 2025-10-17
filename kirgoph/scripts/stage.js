@@ -221,7 +221,7 @@
 
                         if(this.#field[y][x] && this.#field[y][x].param_letter){
 
-                            let elem = this.#field[y][x];
+                            var elem = this.#field[y][x];
 
                             if(!elem.table_elem){
 
@@ -232,6 +232,10 @@
                                 label.innerHTML = elem.param_letter+elem.number;
                                 let input = document.createElement('input');
                                 input.type = "text";
+                                input.value = elem.param;
+                                input.onkeyup = function(){
+                                    elem.setValue(this.value);
+                                }
                                 let units = document.createElement('div');
                                 units.innerHTML = elem.unit;
 

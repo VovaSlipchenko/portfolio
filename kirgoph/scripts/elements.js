@@ -1,21 +1,27 @@
 class Element{
 
     unit = '';
+    param = 0;
+    label_font_size = 12;
+    label_padding = 2;
+    final_value = '';
 
     constructor(){
         this.unic_id = Math.ceil(Math.random()*1000000);
     }
 
-    drawLabel(context, left_real_x, top_real_y){
-
-        const label_font_size = 12;
-        const label_padding = 2;
+    drawLabel(context, x, y){
 
         if(this.number != 0){
-            context.font = label_font_size+"px Arial";
-            context.fillText(this.param_letter+this.number, left_real_x + label_padding, top_real_y + label_font_size);
+            context.font = this.label_font_size+"px Arial";
+            context.fillText(this.param_letter+this.number, x + this.label_padding, y + this.label_font_size);
         }
 
+    }
+
+    drawValue(context, x, y){
+        context.font = this.label_font_size+"px Arial";
+        context.fillText(this.final_value, x - 20, y - this.label_padding);
     }
 
     setTableElement(elem){
@@ -27,8 +33,10 @@ class Element{
         this.table_elem = false;
     }
 
-    drawValue(context, right_real_x, bottom_real_y){
 
+    setValue(value){
+        this.param = parseInt(value);
+        this.final_value = this.param + this.unit;
     }
 
     checkError(field_manager){
@@ -58,7 +66,7 @@ class ElementPower extends Element{
         super();
         this.x = x;
         this.y = y;
-        this.number = number;        
+        this.number = number;      
         if(field_manager){
             let allowed_directions = this.getAllowedDirections(field_manager);
             if(allowed_directions.includes(dir)){
@@ -71,7 +79,8 @@ class ElementPower extends Element{
         }
 
         this.unit = 'V';
-        
+        this.setValue(10);
+    
     }
 
     direction = 0;
@@ -242,6 +251,7 @@ class ElementPower extends Element{
             context.stroke();
 
             this.drawLabel(context, left_real_x, top_real_y);
+            this.drawValue(context, right_real_x, bottom_real_y);
 
         }
 
@@ -259,6 +269,7 @@ class ElementResistor extends Element{
         this.number = number;
         this.direction = 0;
         this.unit = 'Ohm';
+        this.setValue(1000);
     }
 
     direction = 0;
@@ -290,6 +301,16 @@ class ElementResistor extends Element{
         }
     }
 
+    setValue(value){
+        console.log('SET VALUE CUSTOM', value);
+        let val = parseInt(value);
+        if(val < 0) val = 1;
+        this.param = val;
+        this.final_value = this.param+"Ω";
+        if(this.param >= 1000){
+            this.final_value = (this.param/1000).toFixed(1)+"KΩ";
+        }
+    }
 
     render(context, cell_size, field_manager){
 
@@ -337,6 +358,7 @@ class ElementResistor extends Element{
             context.stroke();
 
             this.drawLabel(context, left_real_x, top_real_y);
+            this.drawValue(context, right_real_x, bottom_real_y);
 
         }
 
