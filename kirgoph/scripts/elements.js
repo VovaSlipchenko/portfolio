@@ -500,8 +500,8 @@ class ElementWire extends Element{
         const result = field_manager.getElementsAroundAmount(this.x, this.y);
 
         if(result.total_elements == 2 && result.total_elements_vertical == 1 && result.total_elements_horizontal == 1){
-            console.log('CORNER ERROR');
-            return true;
+            //console.log('CORNER ERROR');
+            //return true;
         }
 
         return false;   

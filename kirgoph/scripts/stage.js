@@ -1,4 +1,41 @@
 
+        Array.prototype.getByCoords = function(y,x){
+
+            console.log('Get by coords y:'+y+',x:'+x+', length:'+this.length, this);
+
+            if(x < 0) return null;
+            if(y < 0) return null;
+            if(y > this.length-1) return null;
+            if(x > this[y].length-1) return null;
+
+            return this[y][x];
+        }
+
+
+        Array.prototype.getByCoordsInChilds = function(y,x){
+
+            var res = false;
+
+            this.forEach(child=>{
+                if(!res){
+                    res = child.getByCoords(y,x);
+                }
+            });
+
+            return res;
+
+        }
+
+        Array.prototype.print = function(){
+            for(let y = 0; y < this.length; y++){
+                let str = '';
+                for(let x = 0; x < this[y].length; x++){
+                    str+=this[y][x];
+                }
+                console.log(str);
+            }
+        }
+        
         class WorkingStage{
 
             #width = 13;
@@ -293,5 +330,124 @@
                 this.#context.stroke();
 
             }
+
+
+            countStage(){
+
+                let stage_correct = true;
+
+                let stageMap = Array();
+                let circuitMaps = Array();
+
+                for(let y = 0; y < this.#height; y++){
+                    stageMap[y] = new Array();
+                }
+
+                for(let y = 0; y < this.#field.length; y++){
+                    for(let x = 0; x < this.#field[y].length; x++){
+                        stageMap[y][x] = (this.#field[y][x])?1:0;
+                    }
+                }
+
+                let num = 2;
+
+                for(let y = 0; y < this.#field.length; y++){
+                    for(let x = 0; x < this.#field[y].length; x++){
+                        if(stageMap[y][x] == 0){
+                            this.recursiveFill(stageMap, x, y, num);
+                            num++;
+                        }
+                    }
+                }
+
+                stageMap.print();
+                console.log(stageMap);
+                
+
+                /*
+                
+                for(let y = 0; y < this.#field.length; y++){
+                    for(let x = 0; x < this.#field[y].length; x++){
+                        if(stageMap[y][x] == 1){
+                            let branches = 0;
+                            if(stageMap.getByCoords(y, x-1) == 1) branches++;
+                            if(stageMap.getByCoords(y-1, x) == 1) branches++;
+                            if(stageMap.getByCoords(y, x+1) == 1) branches++;
+                            if(stageMap.getByCoords(y+1, x) == 1) branches++;
+                            if(branches >= 3){
+                                stageMap[y][x] = 2;
+                            }
+                        }
+                    }
+                }
+
+                for(let y = 0; y < this.#field.length; y++){
+                    for(let x = 0; x < this.#field[y].length; x++){
+                        if(stageMap[y][x] == 2){
+
+                            console.log('found1');
+
+                            let dirX = 0;
+                            let dirY = 0;
+
+                            if(stageMap.getByCoords(y, x-1) == 1  && !circuitMaps.getByCoordsInChilds(y, x-1)){
+                                console.log('dir left');
+                                dirX = -1;
+                            } else if(stageMap.getByCoords(y-1, x) == 1 && !circuitMaps.getByCoordsInChilds(y-1, x)){
+                                console.log('dir top');
+                                dirY = -1;
+                            } else if(stageMap.getByCoords(y, x+1) == 1 && !circuitMaps.getByCoordsInChilds(y, x+1)){
+                                console.log('dir right');
+                                dirX + 1;
+                            } else if(stageMap.getByCoords(y+1, x) == 1 && !circuitMaps.getByCoordsInChilds(y+1, x)){
+                                console.log('dir bottom');
+                                dirY + 1;
+                            }
+
+                            if(dirX != 0 || dirY != 0){
+
+                                console.log('direction found');
+
+                                let cursorX = 0;
+                                let cursorY = 0;
+
+                                let circuitMap = [];
+                                for(let y = 0; y < this.#height; y++){
+                                    circuitMap[y] = [];
+                                    for(let x = 0; x < this.#width; x++){
+                                        circuitMap[y][x] = 0;
+                                    }
+                                }
+
+                                console.log('circuit map', circuitMap);
+
+
+
+                                circuitMaps.push(circuitMap);
+
+                            }
+
+                        }
+                    }
+                }
+
+                console.log('stageMap', stageMap);
+
+                */
+
+            }
+
+            recursiveFill(map, x, y, num){
+
+                if(map.getByCoords(y,x) === 0){
+                    map[y][x] = num;
+                    this.recursiveFill(map, x+1, y, num);
+                    this.recursiveFill(map, x-1, y, num);
+                    this.recursiveFill(map, x, y+1, num);
+                    this.recursiveFill(map, x, y-1, num);
+                }
+
+            }
+            
 
         }

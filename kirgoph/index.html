@@ -17,6 +17,7 @@
                 <button class="toolbox_button" id="mode_eds">EDS</button>
                 <button class="toolbox_button" id="mode_resistor">RESISTOR</button>
                 <button class="toolbox_button" id="mode_eraser">ERASER</button>
+                <button class="toolbox_button" id="mode_count">COUNT</button>
             </div>
             <canvas id="canvas_main"></canvas>
             <div id="canvas_table"></div>
@@ -33,6 +34,10 @@
         });
 
         //this.setMode(WorkingStageModes.MODE_ADD_ELEMENT, new ElementPower(0,0,0,0));
+
+        document.getElementById('mode_count').onclick = function(){
+            stage.countStage();
+        }
 
         document.getElementById('mode_wire').onclick = function(){
 
