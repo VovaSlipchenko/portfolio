@@ -1,0 +1,157 @@
+<html>
+
+    <head>
+
+    </head>
+
+    <body>
+
+        <style>
+
+            body{
+                background:#000;
+            }
+
+            #holder{
+                background:#FFF;
+                position: relative;
+            }     
+            
+            .character{
+                position:absolute;
+                background:#00D;
+                border-radius: 10px;
+                z-index:5;
+            }
+
+            .hollow{
+                position: absolute;
+                box-shadow:inset 1px 1px 10px 5px rgba(0,0,0,0.5);
+                box-sizing: border-box;
+                z-index: 10;
+            }
+
+            .upper{
+                position: absolute;
+                background:#000;
+                z-index: 20;
+            }
+
+        </style>
+
+
+        <div id="holder">
+            
+        </div>
+
+        <script>
+
+            var hollowWidth = 60;
+            var hollowHeight = 60;
+            var margin = 14;
+
+            var amountX = 7;
+            var amountY = 5;
+
+            var charactersAmount = 10;
+            var characterRadius = 7;
+            var characters = [];
+
+            ////
+
+            var fieldWidth = (hollowWidth + margin) * amountX + margin;
+            var fieldHeight = (hollowHeight + margin) * amountY + margin;
+
+            var holderBlock = document.getElementById('holder');
+
+            holderBlock.style.width = fieldWidth + "px";
+            holderBlock.style.height = fieldHeight + "px";
+
+            for(var y = 0; y < amountY; y++){
+                for(var x = 0; x < amountX; x++){
+                    var hollowBlock = document.createElement("div");
+                    hollowBlock.className = "hollow";
+                    hollowBlock.style.left = (x*hollowWidth+margin+margin*x);
+                    hollowBlock.style.top = (y*hollowHeight+margin+margin*y);
+                    hollowBlock.style.width = hollowWidth+"px";
+                    hollowBlock.style.height = hollowHeight+"px";
+                    holderBlock.appendChild(hollowBlock);
+                }
+            }
+
+            ////////////
+
+            for(var y = 0; y < amountY + 1; y++){
+                var upperBlock = document.createElement("div");
+                upperBlock.className = "upper";
+                upperBlock.style.height = margin+"px";
+                upperBlock.style.width = fieldWidth+"px";
+                upperBlock.style.top = margin*y+hollowHeight*y;
+                holderBlock.appendChild(upperBlock);
+            } 
+
+            for(var x = 0; x < amountX + 1; x++){
+                var upperBlock = document.createElement("div");
+                upperBlock.className = "upper";
+                upperBlock.style.width = margin+"px";
+                upperBlock.style.height = fieldHeight+"px";
+                upperBlock.style.left = margin*x+hollowWidth*x;
+                holderBlock.appendChild(upperBlock);
+            }
+
+            ////////////
+
+            for(var i = 0; i < charactersAmount; i++){
+                var characterBlock = document.createElement("div");
+                characterBlock.className = "character";
+                characterBlock.style.width = (characterRadius*2)+"px";
+                characterBlock.style.height = (characterRadius*2)+"px";
+                var blocked = false;
+                do {
+                    var x = characterRadius * 6 + Math.random() * (fieldWidth - characterRadius * 12);
+                    var y = characterRadius * 6 + Math.random() * (fieldHeight - characterRadius * 12);
+                    blocked = false;
+                    characters.forEach(c=>{
+                        if(Math.pow(x - c.x, 2) + Math.pow(y-c.y,2) < Math.pow(characterRadius * 4,2)) blocked = true;
+                    });
+                } while (blocked);
+                characterBlock.style.left = (x-characterRadius/2)+"px";
+                characterBlock.style.top = (y-characterRadius/2)+"px";
+                characterBlock.x = x;
+                characterBlock.y = y;
+                characterBlock.angle = (Math.PI * 2) * Math.random();
+                characterBlock.speed = 3;
+                characters.push(characterBlock);
+                holderBlock.appendChild(characterBlock);
+            }
+
+
+
+            window.setInterval(function(){
+                characters.forEach(c=>{
+
+                    var newX = c.x + c.speed * Math.cos(c.angle);
+                    var newY = c.y + c.speed * Math.sin(c.angle);
+
+                    if(newX < 0){
+
+                    }
+
+                    if(newY < 0){
+
+                    }
+
+                    c.style.left = (newX-characterRadius/2)+"px";
+                    c.style.top = (newY-characterRadius/2)+"px";
+
+                    c.x = newX;
+                    c.y = newY;
+
+                });
+            }, 30);
+
+        </script>
+
+    </body>
+
+</html>
