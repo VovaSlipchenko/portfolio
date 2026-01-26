@@ -15,6 +15,7 @@
             #holder{
                 background:#FFF;
                 position: relative;
+                overflow: hidden;
             }     
             
             .character{
@@ -37,6 +38,12 @@
                 z-index: 20;
             }
 
+            .lightSource{
+                position: absolute;
+                background: #F00;
+                z-index: 30;
+            }
+
         </style>
 
 
@@ -48,7 +55,9 @@
 
             var hollowWidth = 60;
             var hollowHeight = 60;
+            var hollowDepth = 5;
             var margin = 14;
+            var hollowBlocks = [];
 
             var amountX = 7;
             var amountY = 5;
@@ -57,25 +66,76 @@
             var characterRadius = 7;
             var characters = [];
 
+            var lightSourceHeight = 10;
+            var lightSourceIntense = 3;
+            var lightSourceRadius = 5;
+            var lightSource = null;
+
             ////
 
             var fieldWidth = (hollowWidth + margin) * amountX + margin;
             var fieldHeight = (hollowHeight + margin) * amountY + margin;
+
+            var lightSourceX = fieldWidth / 2;
+            var lightSourceY = fieldHeight / 2;
 
             var holderBlock = document.getElementById('holder');
 
             holderBlock.style.width = fieldWidth + "px";
             holderBlock.style.height = fieldHeight + "px";
 
+            var lightSource = document.createElement("div");
+            lightSource.className = "lightSource";
+            lightSource.update = function(){
+                this.style.width = lightSourceRadius*2+"px";
+                this.style.height = lightSourceRadius*2+"px";
+                this.style.left = (lightSourceX - lightSourceRadius)+"px";
+                this.style.top = (lightSourceY - lightSourceRadius)+"px";
+            }
+
+            holderBlock.appendChild(lightSource);
+
+            holderBlock.onclick = function(e){
+                console.log(e);
+                lightSourceX = e.clientX;
+                lightSourceY = e.clientY;
+            }
+
             for(var y = 0; y < amountY; y++){
                 for(var x = 0; x < amountX; x++){
+
                     var hollowBlock = document.createElement("div");
                     hollowBlock.className = "hollow";
-                    hollowBlock.style.left = (x*hollowWidth+margin+margin*x);
-                    hollowBlock.style.top = (y*hollowHeight+margin+margin*y);
-                    hollowBlock.style.width = hollowWidth+"px";
-                    hollowBlock.style.height = hollowHeight+"px";
+                    hollowBlock.x = hollowBlock.style.left = (x*hollowWidth+margin+margin*x);
+                    hollowBlock.y = hollowBlock.style.top = (y*hollowHeight+margin+margin*y);
+                    hollowBlock.width = hollowBlock.style.width = hollowWidth+"px";
+                    hollowBlock.height = hollowBlock.style.height = hollowHeight+"px";
+
+                    hollowBlock.countShadow = function(){
+
+                        var pointLight = { x: lightSourceX, y: lightSourceY, z: lightSourceHeight };
+                        var pointHollow = { x: this.x + hollowWidth / 2, y: this.y + hollowHeight / 2 };
+
+                        if(pointLight.x >= this.x 
+                            && pointLight.y >= this.y 
+                            && pointLight.x <= this.x+hollowWidth
+                            && pointLight.y <= this.y+hollowHeight
+                        ){
+                            this.style.boxShadow = "none";     
+                        } else {
+                            var angle = Math.atan2(pointHollow.y - pointLight.y, pointHollow.x - pointLight.x);
+                            var dist = 10;
+                            var shiftRight = dist * Math.cos(angle);
+                            var shiftDown = dist * Math.sin(angle);
+                            this.style.boxShadow = "inset "+shiftRight.toFixed(2)+"px "+shiftDown.toFixed(2)+"px 15px -5px #000000";
+                        }
+
+                    }
+
+                    hollowBlock.countShadow();
+                    hollowBlocks.push(hollowBlock);
                     holderBlock.appendChild(hollowBlock);
+
                 }
             }
 
@@ -115,12 +175,17 @@
                         if(Math.pow(x - c.x, 2) + Math.pow(y-c.y,2) < Math.pow(characterRadius * 4,2)) blocked = true;
                     });
                 } while (blocked);
-                characterBlock.style.left = (x-characterRadius/2)+"px";
-                characterBlock.style.top = (y-characterRadius/2)+"px";
+                characterBlock.style.left = (x-characterRadius)+"px";
+                characterBlock.style.top = (y-characterRadius)+"px";
                 characterBlock.x = x;
                 characterBlock.y = y;
                 characterBlock.angle = (Math.PI * 2) * Math.random();
                 characterBlock.speed = 3;
+                characterBlock.recountVelocity = function(){
+                    this.velocityX = this.speed * Math.cos(this.angle);
+                    this.velocityY = this.speed * Math.sin(this.angle);
+                }
+                characterBlock.recountVelocity();
                 characters.push(characterBlock);
                 holderBlock.appendChild(characterBlock);
             }
@@ -130,24 +195,33 @@
             window.setInterval(function(){
                 characters.forEach(c=>{
 
-                    var newX = c.x + c.speed * Math.cos(c.angle);
-                    var newY = c.y + c.speed * Math.sin(c.angle);
+                    var newX = c.x + c.velocityX;
+                    var newY = c.y + c.velocityY;
 
-                    if(newX < 0){
-
+                    if(newX - characterRadius < 0 || newX + characterRadius > fieldWidth){
+                        c.angle = Math.PI - c.angle;
+                        c.recountVelocity();
                     }
 
-                    if(newY < 0){
-
+                    if(newY - characterRadius < 0 || newY + characterRadius > fieldHeight){
+                        c.angle = c.angle*-1;
+                        c.recountVelocity();
                     }
 
-                    c.style.left = (newX-characterRadius/2)+"px";
-                    c.style.top = (newY-characterRadius/2)+"px";
+                    c.style.left = (newX-characterRadius)+"px";
+                    c.style.top = (newY-characterRadius)+"px";
 
                     c.x = newX;
                     c.y = newY;
 
                 });
+
+                lightSource.update();
+
+                hollowBlocks.forEach(c=>{
+                    c.countShadow();
+                });
+
             }, 30);
 
         </script>
