@@ -66,7 +66,7 @@
             var characterRadius = 7;
             var characters = [];
 
-            var lightSourceHeight = 50;
+            var lightSourceHeight = 60;
             var lightSourceIntense = 3;
             var lightSourceRadius = 5;
             var lightSource = null;
@@ -129,7 +129,10 @@
                             var dist = hollowDepth*tangens;
                             var shiftRight = dist * Math.cos(angle);
                             var shiftDown = dist * Math.sin(angle);
-                            this.style.boxShadow = "inset "+shiftRight.toFixed(2)+"px "+shiftDown.toFixed(2)+"px 15px -5px #000000";
+                            var spreadCoef = tangens;
+                            var spread = 0 - spreadCoef;
+                            var blur = 15 + spreadCoef;
+                            this.style.boxShadow = "inset "+shiftRight.toFixed(2)+"px "+shiftDown.toFixed(2)+"px "+blur.toFixed(2)+"px "+spread+"px #000000";
                         }
 
                     }
